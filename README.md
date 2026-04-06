@@ -3,7 +3,7 @@
 **Star Survivor**
 
 ## 발표 영상 자료에 대한 링크
-- https://youtu.be/2StkF-23h-s
+- https://youtu.be/7MpUPW3_Ar8
 
 ## 프로젝트 Git Repository 에 대한 링크
 - https://github.com/LeeYlyw/StarSurvivor
