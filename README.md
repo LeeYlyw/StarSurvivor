@@ -1,4 +1,3 @@
-<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/5f7ed173-fd95-40a3-86f3-95f5046539cc" /># Star Survivor
 
 ## 프로젝트 제목
 **Star Survivor**
