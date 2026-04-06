@@ -81,26 +81,31 @@
 
 ### 1. 시작 화면
 <img width="507" height="495" alt="t1" src="https://github.com/user-attachments/assets/376aba37-4669-4f21-b1aa-801bbcf4dd6f" />
+
 - 게임 제목과 시작 버튼이 표시된다.
 - 사용자는 버튼을 눌러 게임을 시작할 수 있다.
 
 ### 2. 게임 시작
 <img width="509" height="497" alt="t2" src="https://github.com/user-attachments/assets/92c1d152-ac8e-4ab0-ae8b-830a2caaa93e" />
+
 - 플레이어 우주선이 화면 하단에서 이동하며 적 드론과 운석을 회피한다.
 - 점수, 체력, 생존 시간이 화면에 표시된다.
 
 ### 3. 생존 플레이
 <img width="1024" height="578" alt="t3" src="https://github.com/user-attachments/assets/2ba26547-d39e-4eae-aceb-cd3a71355e1d" />
+
 - 적 드론은 자동 공격으로 파괴할 수 있다.
 - 운석은 파괴할 수 없으므로 회피가 필요하다.
 
 ### 4. 아이템 획득 및 강화
 <img width="1024" height="578" alt="t3" src="https://github.com/user-attachments/assets/7ec48818-474c-41a0-a720-743bc5f68832" />
+
 - 체력 회복 아이템 또는 보호막 아이템을 획득할 수 있다.
 - 아이템을 활용하여 더 오래 생존할 수 있다.
 
 ### 6. 게임오버
 <img width="1024" height="1536" alt="ChatGPT Image 2026년 4월 6일 오전 08_59_46" src="https://github.com/user-attachments/assets/18d2294e-3c42-44b7-a3e1-74f2030f08d6" />
+
 - 체력이 0이 되면 게임오버 화면으로 전환된다.
 - 최종 점수와 생존 시간을 확인하고 다시 시작할 수 있다.
 
