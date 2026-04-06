@@ -1,22 +1,22 @@
-# Star Survivor
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/5f7ed173-fd95-40a3-86f3-95f5046539cc" /># Star Survivor
 
 ## 프로젝트 제목
 **Star Survivor**
 
 ## 발표 영상 자료에 대한 링크
-- [발표 영상 링크 삽입]
+- 발표 영상 업로드 후 링크 추가 예정
 
 ## 프로젝트 Git Repository 에 대한 링크
-- [Git Repository 링크 삽입]
+- https://github.com/LeeYlyw/StarSurvivor
 
 ## README.md 에 대한 링크
-- [README 링크 삽입]
+- https://github.com/LeeYlyw/StarSurvivor/blob/main/README.md
 
 ---
 
-## 개발 범위
+## 프로젝트 개요
 본 프로젝트는 스마트폰 프로그래밍 수업에서 다루는 게임 제작 기술을 응용하여 제작하는 **2D 우주 생존 액션 게임**이다.  
-수업 Git repo의 README를 참고하여, 이번 학기에 다루게 되는 **CustomView 기반 게임 화면**, **게임 루프와 시간 기반 이동**, **GameObject / Sprite / MainGame 구조**, **터치 이벤트 처리**, **프레임 애니메이션**, **적 생성 및 오브젝트 재활용**, **점수 표시**, **배경 레이어링 및 스크롤**, **충돌 처리**, **다중 씬 구성**을 중심으로 개발 범위를 설정한다.
+수업 Git repo의 README를 참고하여, 이번 학기에 다루게 되는 **CustomView 기반 게임 화면**, **게임 루프와 시간 기반 이동**, **GameObject / Sprite / MainGame 구조**, **터치 이벤트 처리**, **프레임 애니메이션**, **적 생성 및 오브젝트 재활용**, **점수 표시**, **배경 레이어링 및 스크롤**, **충돌 처리**, **다중 씬 구성**을 중심으로 개발 범위를 설정하였다.
 
 ---
 
@@ -38,7 +38,7 @@
 
 ---
 
-## 개발 범위
+## 상세 개발 범위
 
 ### 개발 주요 요소
 - 플레이어 우주선 1종
@@ -81,15 +81,21 @@
 ## 예상 게임 실행 흐름
 
 ### 1. 시작 화면
+<img width="507" height="495" alt="t1" src="https://github.com/user-attachments/assets/376aba37-4669-4f21-b1aa-801bbcf4dd6f" />
+
 - 게임 제목과 시작 버튼이 표시된다.
 - 플레이어는 시작 버튼을 눌러 게임을 시작한다.
 
 ### 2. 게임 시작
+<img width="509" height="497" alt="t2" src="https://github.com/user-attachments/assets/92c1d152-ac8e-4ab0-ae8b-830a2caaa93e" />
+
 - 우주선이 화면 하단에 등장한다.
 - 배경이 스크롤되며 우주 공간이 이동하는 느낌을 준다.
 - 점수, 체력, 생존 시간이 화면에 표시된다.
 
 ### 3. 생존 플레이
+<img width="1024" height="578" alt="t3" src="https://github.com/user-attachments/assets/2ba26547-d39e-4eae-aceb-cd3a71355e1d" />
+
 - 플레이어는 드래그로 우주선을 움직여 적과 장애물을 피한다.
 - 우주선은 자동으로 기본 공격을 발사한다.
 - 적 드론은 공격으로 파괴할 수 있으며, 처치 시 점수가 증가한다.
@@ -97,15 +103,17 @@
 - 시간이 지날수록 적과 장애물의 수, 이동 속도가 증가한다.
 
 ### 4. 아이템 획득 및 강화
+<img width="1024" height="578" alt="t3" src="https://github.com/user-attachments/assets/7ec48818-474c-41a0-a720-743bc5f68832" />
+
 - 일정 시간마다 아이템이 등장한다.
 - 체력 회복 또는 보호막 아이템을 획득할 수 있다.
 - 강화 상태에서는 더 강한 공격을 사용할 수 있다.
 
-### 5. 위기 상황
+### 6. 게임오버
+<img width="1024" height="1536" alt="ChatGPT Image 2026년 4월 6일 오전 08_59_46" src="https://github.com/user-attachments/assets/18d2294e-3c42-44b7-a3e1-74f2030f08d6" />
+
 - 적이나 장애물과 충돌하면 체력이 감소한다.
 - 체력이 낮아지면 플레이어는 더 위험한 상태가 된다.
-
-### 6. 게임오버
 - 체력이 0이 되면 게임이 종료된다.
 - 최종 점수와 생존 시간이 표시된다.
 - 다시 시작 버튼을 통해 재도전할 수 있다.
@@ -114,6 +122,25 @@
 
 ## 게임 화면 자료를 활용한 실행 흐름 설명
 
+### 시작 화면
+- 게임 제목과 시작 버튼이 표시된다.
+- 사용자는 버튼을 눌러 게임을 시작할 수 있다.
+
+### 인게임 화면
+- 플레이어 우주선이 화면 하단에서 이동하며 적 드론과 운석을 회피한다.
+- 점수, 체력, 생존 시간이 화면에 표시된다.
+
+### 전투 및 회피 장면
+- 적 드론은 자동 공격으로 파괴할 수 있다.
+- 운석은 파괴할 수 없으므로 회피가 필요하다.
+
+### 아이템 획득 장면
+- 체력 회복 아이템 또는 보호막 아이템을 획득할 수 있다.
+- 아이템을 활용하여 더 오래 생존할 수 있다.
+
+### 게임오버 화면
+- 체력이 0이 되면 게임오버 화면으로 전환된다.
+- 최종 점수와 생존 시간을 확인하고 다시 시작할 수 있다.
 
 ---
 
@@ -142,7 +169,7 @@
 - 생존 시간 기반 난이도 증가 적용
 
 ### 5주차
-- Object Lifecycle Management(recycle) 구조 적용
+- Object Lifecycle Management (recycle) 구조 적용
 - Score / Font Drawing 기반 UI 표시
 - 배경 레이어링 및 스크롤 처리
 
