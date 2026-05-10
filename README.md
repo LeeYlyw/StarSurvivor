@@ -121,20 +121,8 @@ SpaceSurvival
 
 ## 7. Git Commit 관리
 
-### GitHub Insights Commits
+<img width="623" height="218" alt="image" src="https://github.com/user-attachments/assets/807182d9-ee8f-4f2a-8030-b5170762c227" />
 
-아래 이미지는 GitHub Insights의 commits 화면이다.
-
-![github-insights-commits](./docs/github-insights-commits.png)
-
-### 주별 Commit 수
-
-| 주차 | 주요 작업 | Commit 수 |
-|---|---|---:|
-| 1주차 | 프로젝트 생성, `a2dg` 프레임워크 연결, 기본 게임 구조 구성 | 숫자 입력 |
-| 2주차 | GameObject / Sprite 구조 정리, 클래스 분리, 터치 입력 처리 | 숫자 입력 |
-| 3주차 | 자동 공격, 적 생성, 충돌 처리, 점수 증가 구현 | 숫자 입력 |
-| 4주차 | 운석 장애물, HP 처리, 난이도 증가, 이미지 리소스 정리 | 숫자 입력 |
 
 ---
 
