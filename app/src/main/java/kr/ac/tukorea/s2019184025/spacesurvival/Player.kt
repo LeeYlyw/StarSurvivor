@@ -46,6 +46,14 @@ class Player(
     var hp = MAX_HP
         private set
 
+    // 보호막 무적 지속 시간을 관리하는 타이머 변수 (0보다 크면 무적)
+    var shieldTimer = 0f
+        private set
+
+    // 외부(CollisionChecker)에서 플레이어가 현재 무적 상태인지 쉽게 판단할 수 있는 플래그
+    val isInvincible: Boolean
+        get() = shieldTimer > 0f
+
     val dead: Boolean
         get() = hp <= 0
 
@@ -58,6 +66,13 @@ class Player(
 
     override fun update(gctx: GameContext) {
         if (dead) return
+
+        if (shieldTimer > 0f) {
+            shieldTimer -= gctx.frameTime
+            if (shieldTimer < 0f) {
+                shieldTimer = 0f
+            }
+        }
 
         updatePosition(gctx)
         fireBullet(gctx)
@@ -95,6 +110,17 @@ class Player(
 
     fun resetHp() {
         hp = MAX_HP
+    }
+
+    // 보호막 아이템을 먹었을 때 호출하여 무적 시간을 충전하는 함수
+    fun activateShield(duration: Float) {
+        shieldTimer = duration
+    }
+
+    // 재시작(Restart)할 때 혹시 남아있을지 모를 보호막 시간도 깨끗이 지워줍니다.
+    fun resetStatus() {
+        hp = MAX_HP
+        shieldTimer = 0f
     }
 
     private fun updatePosition(gctx: GameContext) {
@@ -139,21 +165,75 @@ class Player(
         fireCoolTime = FIRE_INTERVAL
 
         val scene = gctx.scene as? MainScene ?: return
-        val power = 10 + scene.getScore() / 1000
+        val currentScore = scene.getScore()
+
+        // 1. 기존 점수 비례 데미지 공식을 그대로 유지합니다.
+        val power = 10 + currentScore / 1000
 
         val bulletStartX = x + aimDirX * BULLET_OFFSET
         val bulletStartY = y + aimDirY * BULLET_OFFSET
 
-        val bullet = Bullet.get(
-            gctx = gctx,
-            x = bulletStartX,
-            y = bulletStartY,
-            dirX = aimDirX,
-            dirY = aimDirY,
-            power = power,
-        )
+        // 2. [신설] 점수대별 무기 확장 단계(Tier)를 정의합니다.
+        // - 1단계 (0 ~ 1499점): 기존과 동일하게 정면 1발 자동 발사
+        // - 2단계 (1500 ~ 3499점): 정면 기준 좌우로 약간 벌어진 V자 형태의 2발 동시 발사
+        // - 3단계 (3500점 이상): 정면 1발 + 좌우 확산 2발 포함 총 3발 부채꼴(Spread) 동시 발사
+        val weaponTier = when {
+            currentScore < 1500 -> 1
+            currentScore < 3500 -> 2
+            else -> 3
+        }
 
-        scene.world.add(bullet, MainScene.Layer.BULLET)
+        when (weaponTier) {
+            1 -> {
+                // 1단계: 기존 순정 코드 그대로 정면 발사
+                val bullet = Bullet.get(gctx, bulletStartX, bulletStartY, aimDirX, aimDirY, power)
+                scene.world.add(bullet, MainScene.Layer.BULLET)
+            }
+            2 -> {
+                // 2단계: 좌우로 각각 약 15도씩 꺾인 벡터를 계산하여 2발 발사
+                val angles = floatArrayOf(-15f, 15f)
+                for (angleOffset in angles) {
+                    val rotatedDir = rotateVector(aimDirX, aimDirY, angleOffset)
+                    val bullet = Bullet.get(
+                        gctx = gctx,
+                        x = bulletStartX,
+                        y = bulletStartY,
+                        dirX = rotatedDir.first,
+                        dirY = rotatedDir.second,
+                        power = power
+                    )
+                    scene.world.add(bullet, MainScene.Layer.BULLET)
+                }
+            }
+            3 -> {
+                // 3단계: 정면(0도), 좌(-25도), 우(+25도) 총 3발 부채꼴 난사
+                val angles = floatArrayOf(-25f, 0f, 25f)
+                for (angleOffset in angles) {
+                    val rotatedDir = rotateVector(aimDirX, aimDirY, angleOffset)
+                    val bullet = Bullet.get(
+                        gctx = gctx,
+                        x = bulletStartX,
+                        y = bulletStartY,
+                        dirX = rotatedDir.first,
+                        dirY = rotatedDir.second,
+                        power = power
+                    )
+                    scene.world.add(bullet, MainScene.Layer.BULLET)
+                }
+            }
+        }
+    }
+
+    // [신설] 지정된 각도(도 단위)만큼 방향 벡터를 정밀하게 회전시켜주는 수학 연산 함수입니다.
+    private fun rotateVector(dx: Float, dy: Float, degrees: Float): Pair<Float, Float> {
+        val radians = Math.toRadians(degrees.toDouble())
+        val cos = kotlin.math.cos(radians).toFloat()
+        val sin = kotlin.math.sin(radians).toFloat()
+
+        // 회전 변환 행렬 공식 적용
+        val rx = dx * cos - dy * sin
+        val ry = dx * sin + dy * cos
+        return Pair(rx, ry)
     }
 
     private fun updateCollisionRect() {
@@ -167,7 +247,7 @@ class Player(
         const val PLAYER_WIDTH = 120f
         const val PLAYER_HEIGHT = 120f
 
-        const val MAX_HP = 100
+        const val MAX_HP = 50
 
         const val FIRE_INTERVAL = 0.28f
         const val BULLET_OFFSET = 65f

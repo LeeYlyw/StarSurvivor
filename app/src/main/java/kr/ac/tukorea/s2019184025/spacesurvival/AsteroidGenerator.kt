@@ -18,6 +18,10 @@ class AsteroidGenerator(
     private var wave = 0
 
     override fun update(gctx: GameContext) {
+        // [보충] MainScene의 상태가 PLAY가 아니라면 운석 생성 타이머를 차단합니다.
+        val scene = gctx.scene as? MainScene ?: return
+        if (scene.gameState != MainScene.State.PLAY) return
+
         asteroidTime -= gctx.frameTime
         if (asteroidTime > 0f) return
 

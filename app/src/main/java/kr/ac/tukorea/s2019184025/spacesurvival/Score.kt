@@ -9,6 +9,7 @@ import kr.ac.tukorea.ge.spgp2026.a2dg.view.GameContext
 class Score(
     private val player: Player,
 ) : IGameObject {
+    // MainScene에서 접근할 수 있도록 private set을 유지합니다.
     var score = 0
         private set
 
@@ -20,6 +21,11 @@ class Score(
 
     fun add(value: Int) {
         score += value
+    }
+
+    // [신설] 재시작 시 점수를 0으로 되돌리기 위한 초기화 함수입니다.
+    fun reset() {
+        score = 0
     }
 
     override fun update(gctx: GameContext) {

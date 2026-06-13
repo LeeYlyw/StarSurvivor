@@ -19,6 +19,10 @@ class EnemyGenerator(
     private var wave = 0
 
     override fun update(gctx: GameContext) {
+        // [보충] MainScene의 상태가 PLAY가 아니라면 적을 생성하는 타이머를 흐르지 않게 차단합니다.
+        val scene = gctx.scene as? MainScene ?: return
+        if (scene.gameState != MainScene.State.PLAY) return
+
         enemyTime -= gctx.frameTime
         if (enemyTime > 0f) return
 
@@ -39,18 +43,36 @@ class EnemyGenerator(
                 player = scene.player,
             )
 
-            scene.world.add(
-                Enemy.get(
-                    gctx = gctx,
-                    x = spawn.first,
-                    y = spawn.second,
-                    dirX = direction.first,
-                    dirY = direction.second,
-                    level = getEnemyLevel(),
-                    speed = speed,
-                ),
-                MainScene.Layer.ENEMY,
-            )
+            // ────────── 👇 여기서부터 수정 및 추가 코드 👇 ──────────
+            // 매 스폰 객체마다 15%의 확률로 보스급 'SpecialEnemy'를 출격시킵니다.
+            if (kotlin.random.Random.nextInt(100) < 15) {
+                scene.world.add(
+                    SpecialEnemy.get(
+                        gctx = gctx,
+                        x = spawn.first,
+                        y = spawn.second,
+                        dirX = direction.first,
+                        dirY = direction.second,
+                        wave = wave
+                    ),
+                    MainScene.Layer.ENEMY // 일반 적과 동일하게 ENEMY 레이어에서 관리되어 이동/출력됩니다.
+                )
+            } else {
+                // 85%의 확률로 기존의 일반 적 드론을 스폰시킵니다.
+                scene.world.add(
+                    Enemy.get(
+                        gctx = gctx,
+                        x = spawn.first,
+                        y = spawn.second,
+                        dirX = direction.first,
+                        dirY = direction.second,
+                        level = getEnemyLevel(),
+                        speed = speed,
+                    ),
+                    MainScene.Layer.ENEMY,
+                )
+            }
+            // ────────── 👆 여기까지 수정 및 추가 코드 👆 ──────────
         }
     }
 
