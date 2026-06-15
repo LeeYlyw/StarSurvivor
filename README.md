@@ -41,10 +41,10 @@
 | Git Repository | https://github.com/LeeYlyw/StarSurvivor   |
 | 최종 README      |https://github.com/LeeYlyw/StarSurvivor/blob/main/README.md    |
 | 최종 발표 영상       |    |
-| 2차 발표 README   |    |
-| 2차 발표 영상       |    |
-| 1차 발표 README   |    |
-| 1차 발표 영상       |    |
+| 2차 발표 README   |https://github.com/LeeYlyw/StarSurvivor/blob/f1cbe0b4df81156e48292feb33717abed823047c/README.md    |
+| 2차 발표 영상       |https://www.youtube.com/watch?v=L0_mDZcsnMI&feature=youtu.be    |
+| 1차 발표 README   |https://github.com/LeeYlyw/StarSurvivor/blob/ab1a62c4770c350b13aa1768d52e008a81f1566e/README.md    |
+| 1차 발표 영상       |https://youtu.be/7MpUPW3_Ar8    |
 
 ---
 
@@ -116,8 +116,7 @@
 
 ### Commit 그래프
 
-(스크린샷 첨부)
-
+<img width="896" height="350" alt="image" src="https://github.com/user-attachments/assets/d777930d-6848-4c3c-9c3d-76f01eedc939" />
 
 # 6. 사용된 기술
 
@@ -205,7 +204,7 @@ MainScene 중심의 게임 흐름 제어 및 재시작 시스템: START, PLAY, G
   - 최종 단계에서 `GameContext` 매개변수 직접 전달 방식으로 구조를 개편할 때도, 이처럼 클래스와 함수가 역할별로 깔끔하게 분류되어 있었던 덕분에 복잡한 리팩토링 작업을 큰 부작용 없이 안정적으로 완수할 수 있었습니다.
 
 ## 📐 아쉬운 점 (한계 및 시행착오)
-* **기획의 오버 엔지니어링으로 인한 시행착오와 일정 관리의 교훈**
+* **시행착오와 일정 관리의 교훈**
   - 2차 발표 시점까지 기존 계획대로 안정적인 빌드를 확보한 후, 최종 마무리를 하면서 더 완성도 높은 게임을 만들고 싶다는 욕심에 복잡한 수동 무기 교체 상점 기능을 무리하게 추가하려고 시도했습니다.
   - 그러나 프레임워크 내부의 레이어 관리 큐와 다수의 컴포넌트 간 참조가 복잡하게 얽히면서 심각한 컴파일 결함이 발생했고, 제한된 마감 시간 내에 구조적 결함을 완전히 해결하기 어렵다고 판단했습니다. 
   - 결국 중간 무기 상점 관련 기능들을 통째로 폐기하고, 대신 점수대별 1자 평행 탄막 사격 시스템과 특수 적 패턴 강화로 선회하여 내실을 다졌습니다. 이 과정을 통해 개발 초기 단계에서 실현 가능한 스코프를 명확히 설정하고 일정에 맞춰 유연하게 기획을 조율하는 능력이 얼마나 중요한지 뼈저리게 깨달았습니다.
