@@ -40,7 +40,7 @@
 | -------------- | -- |
 | Git Repository | https://github.com/LeeYlyw/StarSurvivor   |
 | 최종 README      |https://github.com/LeeYlyw/StarSurvivor/blob/main/README.md    |
-| 최종 발표 영상       |    |
+| 최종 발표 영상       |https://youtu.be/vMqA3vEV1P8    |
 | 2차 발표 README   |https://github.com/LeeYlyw/StarSurvivor/blob/f1cbe0b4df81156e48292feb33717abed823047c/README.md    |
 | 2차 발표 영상       |https://www.youtube.com/watch?v=L0_mDZcsnMI&feature=youtu.be    |
 | 1차 발표 README   |https://github.com/LeeYlyw/StarSurvivor/blob/ab1a62c4770c350b13aa1768d52e008a81f1566e/README.md    |
