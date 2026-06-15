@@ -54,11 +54,11 @@ class SpecialEnemy private constructor(
         this.y = y
         this.dirX = dirX
         this.dirY = dirY
-        this.speed = SPEED + wave * 5f // 웨이브가 진행될수록 이동 속도 약간 증가
+        this.speed = SPEED + wave * 5f
         this.movementTimer = 0f
 
-        // 일반 적보다 3배 이상 높은 맷집을 부여합니다.
-        this.life = START_LIFE + (wave * 2)
+        // 기존 START_LIFE + (wave * 2)에서 wave 가중치를 제거하고 정교하게 조율
+        this.life = START_LIFE + (wave / 2)
         this.maxLife = this.life
 
         syncDstRect()
@@ -131,7 +131,7 @@ class SpecialEnemy private constructor(
         const val SPEED = 140f                 // 덩치가 큰 만큼 전진 속도는 약간 느리게 설정
         const val COLLISION_INSET = 15f
 
-        const val START_LIFE = 8               // 높은 체력 진입장벽
+        const val START_LIFE = 3               // 높은 체력 진입장벽
         const val BONUS_SCORE = 500            // 처치 시 대량의 점수 획득
 
         const val SWAY_FREQUENCY = 5.0f        // 도는 횟수 (지그재그 속도)

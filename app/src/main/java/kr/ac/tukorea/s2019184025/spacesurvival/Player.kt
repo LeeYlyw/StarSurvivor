@@ -167,73 +167,57 @@ class Player(
         val scene = gctx.scene as? MainScene ?: return
         val currentScore = scene.getScore()
 
-        // 1. 기존 점수 비례 데미지 공식을 그대로 유지합니다.
+        // 안전하게 CONTROLLER 레이어를 순회하며 EnemyGenerator 인스턴스를 직접 찾아 wave 값을 획득합니다.
+        var currentWave = 1
+        scene.world.forEachReversedAt(MainScene.Layer.CONTROLLER) { obj ->
+            val generator = obj as? EnemyGenerator
+            if (generator != null) {
+                try {
+                    val field = EnemyGenerator::class.java.getDeclaredField("wave")
+                    field.isAccessible = true
+                    currentWave = field.getInt(generator)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        // 기존 점수 비례 데미지 공식을 그대로 유지합니다.
         val power = 10 + currentScore / 1000
 
         val bulletStartX = x + aimDirX * BULLET_OFFSET
         val bulletStartY = y + aimDirY * BULLET_OFFSET
 
-        // 2. [신설] 점수대별 무기 확장 단계(Tier)를 정의합니다.
-        // - 1단계 (0 ~ 1499점): 기존과 동일하게 정면 1발 자동 발사
-        // - 2단계 (1500 ~ 3499점): 정면 기준 좌우로 약간 벌어진 V자 형태의 2발 동시 발사
-        // - 3단계 (3500점 이상): 정면 1발 + 좌우 확산 2발 포함 총 3발 부채꼴(Spread) 동시 발사
-        val weaponTier = when {
-            currentScore < 1500 -> 1
-            currentScore < 3500 -> 2
-            else -> 3
+        // 라운드 조건에 맞추어 평행 총알 개수 계산
+        // - 1~2 라운드: 1발
+        // - 3~5 라운드: 2발 (2라운드 완료 후)
+        // - 6~9 라운드: 3발 (5라운드 완료 후)
+        // - 10 라운드 이상: 4발 (9라운드 완료 후)
+        val bulletCount = when {
+            currentWave < 3 -> 1
+            currentWave < 6 -> 2
+            currentWave < 10 -> 3
+            else -> 4
         }
 
-        when (weaponTier) {
-            1 -> {
-                // 1단계: 기존 순정 코드 그대로 정면 발사
-                val bullet = Bullet.get(gctx, bulletStartX, bulletStartY, aimDirX, aimDirY, power)
-                scene.world.add(bullet, MainScene.Layer.BULLET)
-            }
-            2 -> {
-                // 2단계: 좌우로 각각 약 15도씩 꺾인 벡터를 계산하여 2발 발사
-                val angles = floatArrayOf(-15f, 15f)
-                for (angleOffset in angles) {
-                    val rotatedDir = rotateVector(aimDirX, aimDirY, angleOffset)
-                    val bullet = Bullet.get(
-                        gctx = gctx,
-                        x = bulletStartX,
-                        y = bulletStartY,
-                        dirX = rotatedDir.first,
-                        dirY = rotatedDir.second,
-                        power = power
-                    )
-                    scene.world.add(bullet, MainScene.Layer.BULLET)
-                }
-            }
-            3 -> {
-                // 3단계: 정면(0도), 좌(-25도), 우(+25도) 총 3발 부채꼴 난사
-                val angles = floatArrayOf(-25f, 0f, 25f)
-                for (angleOffset in angles) {
-                    val rotatedDir = rotateVector(aimDirX, aimDirY, angleOffset)
-                    val bullet = Bullet.get(
-                        gctx = gctx,
-                        x = bulletStartX,
-                        y = bulletStartY,
-                        dirX = rotatedDir.first,
-                        dirY = rotatedDir.second,
-                        power = power
-                    )
-                    scene.world.add(bullet, MainScene.Layer.BULLET)
-                }
-            }
+        // 조준 방향(aimDirX, aimDirY)에 완벽히 수직인 좌우 평행 벡터 계산
+        val perpX = -aimDirY
+        val perpY = aimDirX
+
+        // 1자 대형 총알 간의 평행 간격 폭 설정 (픽셀 단위)
+        val spaceOffset = 30f
+
+        // 총알 개수만큼 가로 정렬을 계산하여 정면 일자로 사격 가동
+        for (i in 0 until bulletCount) {
+            val centerOffset = (i - (bulletCount - 1) / 2f) * spaceOffset
+
+            val finalX = bulletStartX + perpX * centerOffset
+            val finalY = bulletStartY + perpY * centerOffset
+
+            // 모든 총알은 각도가 꺾이지 않고 플레이어가 조준한 방향 그대로 평행하게 전진합니다.
+            val bullet = Bullet.get(gctx, finalX, finalY, aimDirX, aimDirY, power)
+            scene.world.add(bullet, MainScene.Layer.BULLET)
         }
-    }
-
-    // [신설] 지정된 각도(도 단위)만큼 방향 벡터를 정밀하게 회전시켜주는 수학 연산 함수입니다.
-    private fun rotateVector(dx: Float, dy: Float, degrees: Float): Pair<Float, Float> {
-        val radians = Math.toRadians(degrees.toDouble())
-        val cos = kotlin.math.cos(radians).toFloat()
-        val sin = kotlin.math.sin(radians).toFloat()
-
-        // 회전 변환 행렬 공식 적용
-        val rx = dx * cos - dy * sin
-        val ry = dx * sin + dy * cos
-        return Pair(rx, ry)
     }
 
     private fun updateCollisionRect() {
@@ -247,7 +231,7 @@ class Player(
         const val PLAYER_WIDTH = 120f
         const val PLAYER_HEIGHT = 120f
 
-        const val MAX_HP = 50
+        const val MAX_HP = 300
 
         const val FIRE_INTERVAL = 0.28f
         const val BULLET_OFFSET = 65f

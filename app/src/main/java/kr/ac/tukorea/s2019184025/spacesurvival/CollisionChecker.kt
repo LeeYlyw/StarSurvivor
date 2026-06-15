@@ -23,20 +23,35 @@ class CollisionChecker : IGameObject {
 
     private fun checkPlayerEnemyCollision(scene: MainScene, player: Player) {
         scene.world.forEachReversedAt(MainScene.Layer.ENEMY) { enemyObject ->
-            val enemy = enemyObject as? Enemy ?: return@forEachReversedAt
 
-            if (player.collidesWith(enemy)) {
+            // 1. 일반 적 드론 충돌 처리
+            val enemy = enemyObject as? Enemy
+            if (enemy != null && player.collidesWith(enemy)) {
                 Log.d(TAG, "Player collided with enemy")
 
-                // [수정] 플레이어가 무적 상태가 아닐 때만 HP를 감소시킵니다.
                 if (!player.isInvincible) {
                     player.decreaseHp(ENEMY_DAMAGE)
                 } else {
                     Log.d(TAG, "Damage blocked by Shield!")
                 }
 
-                // 적 드론은 무적 상태 여부와 관계없이 부딪히면 파괴됩니다.
                 scene.world.remove(enemy, MainScene.Layer.ENEMY)
+                return@forEachReversedAt
+            }
+
+            // 2. 특수 적 드론 충돌 처리
+            val specialEnemy = enemyObject as? SpecialEnemy
+            if (specialEnemy != null && player.collidesWith(specialEnemy)) {
+                Log.d(TAG, "Player collided with SpecialEnemy")
+
+                if (!player.isInvincible) {
+                    player.decreaseHp(SPECIAL_ENEMY_DAMAGE)
+                } else {
+                    Log.d(TAG, "SpecialEnemy damage blocked by Shield!")
+                }
+
+                scene.world.remove(specialEnemy, MainScene.Layer.ENEMY)
+                return@forEachReversedAt
             }
         }
     }
@@ -59,7 +74,6 @@ class CollisionChecker : IGameObject {
                             scene.world.remove(enemy, MainScene.Layer.ENEMY)
                             scene.addScore(enemy.getScore())
 
-                            // 적 파괴 시 아이템 드롭 분기 (회복 15%, 보호막 8% 확률)
                             val rand = kotlin.random.Random.nextInt(100)
                             if (rand < 15) {
                                 val healItem = HealItem.get(gctx, enemy.x, enemy.y)
@@ -74,7 +88,7 @@ class CollisionChecker : IGameObject {
                 return@forEachReversedAt
             }
 
-            // 2. [신설] 보스급 특수 적 드론 충돌 가동
+            // 2. 보스급 특수 적 드론 충돌 가동
             val specialEnemy = enemyObject as? SpecialEnemy
             if (specialEnemy != null) {
                 scene.world.forEachReversedAt(MainScene.Layer.BULLET) { bulletObject ->
@@ -84,13 +98,11 @@ class CollisionChecker : IGameObject {
                         Log.d(TAG, "Bullet hit SpecialEnemy")
                         scene.world.remove(bullet, MainScene.Layer.BULLET)
 
-                        // 특수 적의 튼튼한 체력을 깎아내립니다.
                         specialEnemy.decreaseLife(bullet.power)
                         if (specialEnemy.dead) {
                             scene.world.remove(specialEnemy, MainScene.Layer.ENEMY)
-                            scene.addScore(specialEnemy.getScore()) // 보너스 500점 획득!
+                            scene.addScore(specialEnemy.getScore())
 
-                            // 특수 적 격추 시에는 생존 보상으로 회복 아이템을 100% 확률로 확정 드롭합니다.
                             val healItem = HealItem.get(gctx, specialEnemy.x, specialEnemy.y)
                             scene.world.add(healItem, MainScene.Layer.UI)
                         }
@@ -108,7 +120,6 @@ class CollisionChecker : IGameObject {
             if (player.collidesWith(asteroid)) {
                 Log.d(TAG, "Player collided with asteroid")
 
-                // [수정] 플레이어가 무적 상태가 아닐 때만 운석 피해를 입힙니다.
                 if (!player.isInvincible) {
                     player.decreaseHp(Asteroid.DAMAGE)
                 } else {
@@ -122,7 +133,6 @@ class CollisionChecker : IGameObject {
 
     private fun checkPlayerItemCollision(scene: MainScene, player: Player) {
         scene.world.forEachReversedAt(MainScene.Layer.UI) { itemObject ->
-            // 1. 회복 아이템 충돌 처리
             val healItem = itemObject as? HealItem
             if (healItem != null && player.collidesWith(healItem)) {
                 Log.d(TAG, "Player obtained HealItem")
@@ -131,12 +141,10 @@ class CollisionChecker : IGameObject {
                 return@forEachReversedAt
             }
 
-            // 2. [신설] 보호막 아이템 충돌 처리
             val shieldItem = itemObject as? ShieldItem
             if (shieldItem != null && player.collidesWith(shieldItem)) {
                 Log.d(TAG, "Player obtained ShieldItem")
 
-                // 플레이어 무적 버프 가동 (4초간 무적)
                 player.activateShield(ShieldItem.SHIELD_DURATION)
 
                 scene.world.remove(shieldItem, MainScene.Layer.UI)
@@ -151,5 +159,6 @@ class CollisionChecker : IGameObject {
     companion object {
         private const val TAG = "CollisionChecker"
         private const val ENEMY_DAMAGE = 10
+        private const val SPECIAL_ENEMY_DAMAGE = 25
     }
 }

@@ -144,8 +144,12 @@ class Enemy private constructor(
         const val ENEMY_HEIGHT = 120f
         const val DEFAULT_SPEED = 210f
         const val COLLISION_INSET = 10f
+
+        // [난이도 튜닝] 레벨당 체력 가중치를 1에서 3으로 대폭 상향 (레벨 3만 돼도 체력 9)
         const val LIFE_PER_LEVEL = 2
-        const val SCORE_PER_LEVEL = 100
+
+        // [보상 상향] 적이 단단해진 만큼 격추 시 획득 점수도 2배로 인상 (레벨 * 200)
+        const val SCORE_PER_LEVEL = 200
         const val MAX_LEVEL_COUNT = 20
 
         private var gauge: Gauge? = null

@@ -28,14 +28,22 @@ class EnemyGenerator(
 
         wave++
         generateEnemies()
-        enemyTime = GEN_INTERVAL
+
+        // [밸런스 재조정] 스폰 속도가 너무 가파르게 빨라지지 않도록 수정 (3초에서 시작해 웨이브당 0.05초씩 감소)
+        // 최대 한계치도 1.2초로 대폭 완화하여 적이 무한정 쏟아지는 현상을 방지합니다.
+        val dynamicInterval = (GEN_INTERVAL - (wave * 0.05f)).coerceAtLeast(1.2f)
+        enemyTime = dynamicInterval
     }
 
     private fun generateEnemies() {
         val scene = gctx.scene as? MainScene ?: return
         val speed = Enemy.DEFAULT_SPEED + (wave - 1) * SPEED_STEP
 
-        repeat(COUNT_PER_WAVE) {
+        // [밸런스 재조정] 초반 기본 물량을 줄이고, 증가 폭을 (wave * 2)에서 (wave * 1)로 반토막 냈습니다.
+        // 1라운드에는 3마리만 스폰되어 초반 부담을 완전히 줄입니다.
+        val dynamicCount = COUNT_PER_WAVE + wave
+
+        repeat(dynamicCount) {
             val spawn = getSpawnPosition()
             val direction = getDirectionToPlayer(
                 enemyX = spawn.first,
@@ -43,7 +51,6 @@ class EnemyGenerator(
                 player = scene.player,
             )
 
-            // ────────── 👇 여기서부터 수정 및 추가 코드 👇 ──────────
             // 매 스폰 객체마다 15%의 확률로 보스급 'SpecialEnemy'를 출격시킵니다.
             if (kotlin.random.Random.nextInt(100) < 15) {
                 scene.world.add(
@@ -72,7 +79,6 @@ class EnemyGenerator(
                     MainScene.Layer.ENEMY,
                 )
             }
-            // ────────── 👆 여기까지 수정 및 추가 코드 👆 ──────────
         }
     }
 
@@ -85,7 +91,8 @@ class EnemyGenerator(
             0 -> Pair(Random.nextFloat() * screenWidth, -margin)                 // 위쪽 바깥
             1 -> Pair(Random.nextFloat() * screenWidth, screenHeight + margin)   // 아래쪽 바깥
             2 -> Pair(-margin, Random.nextFloat() * screenHeight)                // 왼쪽 바깥
-            else -> Pair(screenWidth + margin, Random.nextFloat() * screenHeight) // 오른쪽 바깥
+            else -> Pair(screenWidth + margin, Random.nextFloat() * screenHeight // 오른쪽 바깥
+            )
         }
     }
 
@@ -106,8 +113,10 @@ class EnemyGenerator(
     }
 
     private fun getEnemyLevel(): Int {
-        val baseLevel = (wave + 8) / 10
-        val variedLevel = baseLevel - Random.nextInt(3)
+        // [밸런스 재조정] 초반(1~4라운드)에는 무조건 1레벨 기본 적만 나오도록 성장 곡선을 완만하게 꺾었습니다.
+        // 후반 라운드로 갈수록 서서히 단단한 적이 등장합니다.
+        val baseLevel = 1 + (wave / 4)
+        val variedLevel = baseLevel + Random.nextInt(2)
 
         return variedLevel.coerceIn(1, Enemy.MAX_LEVEL_COUNT)
     }
@@ -117,9 +126,14 @@ class EnemyGenerator(
         // Enemy 생성 시점만 관리한다.
     }
 
+    fun reset() {
+        wave = 0
+        enemyTime = 0f
+    }
+
     companion object {
-        const val GEN_INTERVAL = 3f
-        const val COUNT_PER_WAVE = 5
-        const val SPEED_STEP = 20f
+        const val GEN_INTERVAL = 3.0f
+        const val COUNT_PER_WAVE = 2 // 기본 물량을 기존 4에서 2로 축소
+        const val SPEED_STEP = 15f   // 속도 증가량도 완화
     }
 }
